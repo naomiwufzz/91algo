@@ -2,7 +2,7 @@ class Solution:
     def plusOne(self, digits):
         array_length = len(digits)
 
-        for i in range(array_length-1, -1, -1): # -1的时候把数组长度为1的情况和别的情况合并，每种情况都不会遍历到-1
+        for i in range(array_length-1, -1, -1): # 注意range是左闭右开，end为-1才会遍历到0
             if digits[i] < 9:
                 digits[i] += 1
                 return digits
