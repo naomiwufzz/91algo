@@ -8,8 +8,7 @@ class Solution:
                 return digits
             else:
                 digits[i] = 0
-                if i-1 != -1: # 对i-1是-1的情况进行拦截
-                    continue
+
         if digits[0] == 0:
             digits.insert(0,1)
         return digits
