@@ -29,7 +29,7 @@ class Solution:
         # 复杂度O(N)
         distance = []
         left_C = float('-inf')
-        right_C = float('-inf')
+        right_C = float('inf')
 
         # 先从左往右
         for i in range(len(S)):
