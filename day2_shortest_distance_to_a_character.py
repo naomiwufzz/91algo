@@ -25,6 +25,24 @@ class Solution:
             distance.append(min([abs(x - i) for x in target_index]))
         return distance
 
+    def shortestToChar2(self, S, C):
+        # 复杂度O(N)
+        distance = []
+        left_C = float('-inf')
+        right_C = float('-inf')
+
+        # 先从左往右
+        for i in range(len(S)):
+            if S[i] == C:
+                left_C = i
+            distance.append(i - left_C)
+        # 再从右往左
+        for i in range(len(S)-1, -1, -1):
+            if S[i] == C:
+                right_C = i
+            distance[i] = min(distance[i], right_C-i)
+        return distance
+
 
 
 
@@ -32,5 +50,10 @@ if __name__ == '__main__':
     sol = Solution()
     S = "loveleetcode"
     C = 'e'
+
+    S = 'aaba'
+    C = 'b'
     result = sol.shortestToChar(S, C)
+    print(result)
+    result = sol.shortestToChar2(S, C)
     print(result)
