@@ -34,32 +34,33 @@ class CustomStack:
     def __init__(self, maxSize: int):
         self.max_size = maxSize
         self.stack = []
+        self.add = [0] * maxSize
 
     def push(self, x: int) -> None:
         # 如果栈还未增长到 maxSize ，就将 x 添加到栈顶。
         if len(self.stack) < self.max_size:
             self.stack.append(x)
 
-        else:
-            pass
-
     def pop(self) -> int:
         # 弹出栈顶元素，并返回栈顶的值，或栈为空时返回 -1
-        if len(self.stack) > 0:
-            pop_value = self.stack[-1]
-            self.stack = self.stack[:-1]
-            return pop_value
-        else:
+        if len(self.stack) == 0:
             return -1
+        else:
+            pop_value = self.stack[-1] + self.add[len(self.stack)-1]
+
+            if len(self.stack) > 1:
+                self.add[len(self.stack)-2] += self.add[len(self.stack)-1]
+            self.stack = self.stack[:-1]
+
+            return pop_value
+
 
     def increment(self, k: int, val: int) -> None:
         # 栈底的 k 个元素的值都增加 val 。如果栈中元素总数小于 k ，则栈中的所有元素都增加 val 。
-        if len(self.stack) < k:
-            for i in range(len(self.stack)):
-                self.stack[i] += val
+        if len(self.stack) > k:
+            self.add[k-1] = val
         else:
-            for i in range(len(self.stack[:k])):
-                self.stack[i] += val
+            self.add[-1] += val
 
 # Your CustomStack object will be instantiated and called as such:
 
