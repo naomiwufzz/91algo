@@ -50,6 +50,9 @@ class CustomStack:
 
             if len(self.stack) > 1:
                 self.add[len(self.stack)-2] += self.add[len(self.stack)-1]
+                self.add[len(self.stack) - 1] = 0
+            elif len(self.stack) == 1:
+                self.add[len(self.stack) - 1] = 0
             self.stack = self.stack[:-1]
 
             return pop_value
@@ -58,10 +61,9 @@ class CustomStack:
     def increment(self, k: int, val: int) -> None:
         # 栈底的 k 个元素的值都增加 val 。如果栈中元素总数小于 k ，则栈中的所有元素都增加 val 。
         if len(self.stack) > k:
-            self.add[k-1] = val
-        else:
-            self.add[-1] += val
-
+            self.add[k-1] += val
+        elif k >= len(self.stack) > 0:
+            self.add[len(self.stack)-1] += val
 # Your CustomStack object will be instantiated and called as such:
 
 
@@ -95,16 +97,25 @@ class CustomStack:
 
 
 
-obj = CustomStack(3)
-obj.push(1)
-obj.push(2)
+obj = CustomStack(30)
 print(obj.pop())
-obj.push(2)
-obj.push(3)
-obj.push(4)
-obj.increment(5, 100)
-obj.increment(2, 100)
+obj.increment(8, 26)
+obj.push(83)
+obj.increment(2,94)
 print(obj.pop())
+print(obj.pop())
+obj.increment(1,51)
+obj.increment(6,75)
+print(obj.pop())
+obj.push(83)
+obj.push(83)
+obj.push(83)
+obj.push(83)
+obj.increment(3,32)
+obj.increment(3,32)
+obj.increment(3,32)
+obj.increment(3,32)
+obj.increment(10,32)
 print(obj.pop())
 print(obj.pop())
 print(obj.pop())
