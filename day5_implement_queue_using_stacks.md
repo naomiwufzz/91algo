@@ -1,49 +1,134 @@
+题目：https://leetcode-cn.com/problems/implement-queue-using-stacks/ 
+
 ### 思路
 
-卡了很久，一直弄不出`aa2[bvc]dd`的情况，会碰到`aa`和`dd`没有加入结果的情况。群里看了lucifer说的解答，我的节点就是，把substring找出来之后，要重新入栈，这个就很简洁
+思路1：暴力实现：用两个栈互相倒，入队列时候把右栈全倒出来进左栈之后入新的数字，出队列的时候把左栈全部倒入右栈。peak的时候如果右栈不为空说明所有的数字都已经倒入右栈了，否则把左栈的数全部倒入右栈再取最后一个。
 
-用栈来存储，遍历一遍，只要不是`]`就压入栈，如果是`]`开始一个个出栈字符串，直到碰到`[`。乘上之前的数字之后，再入栈。最后把栈中的元素加起来就是结果
-
-注意：数字会有大于一位数的情况
+思路2：左右栈都进行数据存储。入队列push的时候，全部都入左栈。出队列的时候，如果右栈不是空的，最上面的一定是最先进入队列的数字，如果右栈是空的就麻烦一点，所以要用一个数值（我的是`self.peak_value`）来记录左栈栈底元素
 
 ### 代码
 
 ```python
-class Solution:
-    def decodeString(self, s: str) -> str:
-        stack = []
-        sub_str = ''
+# 思路1
+class MyQueue:
 
-        for element in s:
+    def __init__(self):
+        """
+        Initialize your data structure here.
+        """
+        self.stack1 = [] # stack 只能push、pop、peak和length
+        self.stack2 = []
 
-            if element != ']': # 如果不是]就压入栈
-                stack.append(element)
-            elif element == ']': # 如果碰到]，出栈整个字符串
-                while stack[-1] != '[':
-                    sub_str = stack.pop() + sub_str
-                if stack[-1] == '[':
-                    stack.pop() # 把[push出栈
-                    num = 0
-                    digit = 1
-                    while len(stack) > 0: # 注意要考虑数字不止一位数的情况
-                        if stack[-1].isdigit():
-                            num += int(stack.pop()) * digit
-                            digit *= 10
-                        else:
-                            break
-                    sub_str = num * sub_str
-                    stack.append(sub_str) # 出来之后整个字符串重新进栈
-                    sub_str = ''
+    def push(self, x: int) -> None:
+        """
+        Push element x to the back of queue.
+        """
+        while len(self.stack2) != 0:
+            self.stack1.append(self.stack2.pop())
+        self.stack1.append(x)
+        print(self.stack1)
 
-        result_str = ''.join(stack)
-        return result_str
+    def pop(self) -> int:
+        """
+        Removes the element from in front of queue and returns that element.
+        """
+        while len(self.stack1) != 0:
+            self.stack2.append(self.stack1.pop())
+        return self.stack2.pop()
 
+    def peek(self) -> int:
+        """
+        Get the front element.
+        """
+        if len(self.stack2) != 0:
+            return self.stack2[-1]
+        else:
+            while len(self.stack1) != 0:
+                self.stack2.append(self.stack1.pop())
+            return self.stack2[-1]
 
+    def empty(self) -> bool:
+        """
+        Returns whether the queue is empty.
+        """
+        if len(self.stack1) + len(self.stack2) == 0:
+            return True
+        else:
+            return False
+
+# 思路2
+class MyQueue:
+
+    def __init__(self):
+        """
+        Initialize your data structure here.
+        """
+        self.stack1 = []  # stack 只能push、pop、peak和length
+        self.stack2 = []
+        self.peek_value = None
+
+    def push(self, x: int) -> None:
+        """
+        Push element x to the back of queue.
+        """
+        if len(self.stack1) == 0:
+            self.peak_value = x  # 左栈空的时候，需要记录栈底的元素
+        self.stack1.append(x)
+
+    def pop(self) -> int:
+        """
+        Removes the element from in front of queue and returns that element.
+        """
+        if len(self.stack2) == 0:
+            while len(self.stack1) != 0:
+                self.stack2.append(self.stack1.pop())
+        elif len(self.stack2) != 0:  # 第一次写的时候这里有问题。其实如果右栈不为空的时候，没必要从左栈倒入
+            pass
+        return self.stack2.pop()
+
+    def peek(self) -> int:
+        """
+        Get the front element.
+        """
+        if len(self.stack2) != 0:
+            return self.stack2[-1]
+        else:
+
+            return self.peak_value
+
+    def empty(self) -> bool:
+        """
+        Returns whether the queue is empty.
+        """
+        if len(self.stack1) + len(self.stack2) == 0:
+            return True
+        else:
+            return False
 ```
 
 ### 复杂度分析
 
-时间复杂度：遍历一次数组，时间复杂度为 O(N^2)。不确定。中间倒序取元素的时候是*N？
+**思路1时间复杂度：**
 
-空间复杂度：O(N)。额外使用了栈的空间记录
+push：最好O(1)，最坏O(N)
+
+pop：O(N)。或者可以倒完再倒回左栈，这样左栈就是O(1）pop是O(N)不变
+
+peak：最好O(1) 最坏O(N)
+
+empty：O(1)
+
+**思路1空间复杂度**：O(N)。N为队列的大小
+
+**思路2时间复杂度：**
+
+push：O(1)
+
+pop：O(N)
+
+peak：O(1) 
+
+empty：O(1)
+
+**思路1空间复杂度**：O(N)。N为队列的大小
 
