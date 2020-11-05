@@ -1,52 +1,49 @@
 ### 思路
 
-两种思路：
+卡了很久，一直弄不出`aa2[bvc]dd`的情况，会碰到`aa`和`dd`没有加入结果的情况。群里看了lucifer说的解答，我的节点就是，把substring找出来之后，要重新入栈，这个就很简洁
 
-- 思路1
+用栈来存储，遍历一遍，只要不是`]`就压入栈，如果是`]`开始一个个出栈字符串，直到碰到`[`。乘上之前的数字之后，再入栈。最后把栈中的元素加起来就是结果
 
-先记录C的位置，保存成一个列表，然后计算S中每一个字符串到C的位置（直接相减取绝对值就是距离），直接取最小值。这种方法，由于要遍历C的位置，所以复杂度为 N^2
-
-- 思路2
-
-就是把左右距离一起算改成左边算和右边算相加，这样可以减少复杂度。即左边扫描一遍，右边扫描一遍，用一个变量记录最近的C的位置。
+注意：数字会有大于一位数的情况
 
 ### 代码
 
 ```python
 class Solution:
-    def shortestToChar(self, S, C):
-        # 复杂度O(N^2)
-        distance = []
-        target_index = []
-        for i in range(len(S)):
-            if S[i] == C:
-                target_index.append(i)
-        for i in range(len(S)):
-            distance.append(min([abs(x - i) for x in target_index]))
-        return distance
+    def decodeString(self, s: str) -> str:
+        stack = []
+        sub_str = ''
 
-    def shortestToChar2(self, S, C):
-        # 复杂度O(N)
-        distance = []
-        left_C = float('-inf')
-        right_C = float('inf')
+        for element in s:
 
-        # 先从左往右
-        for i in range(len(S)):
-            if S[i] == C:
-                left_C = i
-            distance.append(i - left_C)
-        # 再从右往左
-        for i in range(len(S)-1, -1, -1):
-            if S[i] == C:
-                right_C = i
-            distance[i] = min(distance[i], right_C-i)
-        return distance
+            if element != ']': # 如果不是]就压入栈
+                stack.append(element)
+            elif element == ']': # 如果碰到]，出栈整个字符串
+                while stack[-1] != '[':
+                    sub_str = stack.pop() + sub_str
+                if stack[-1] == '[':
+                    stack.pop() # 把[push出栈
+                    num = 0
+                    digit = 1
+                    while len(stack) > 0: # 注意要考虑数字不止一位数的情况
+                        if stack[-1].isdigit():
+                            num += int(stack.pop()) * digit
+                            digit *= 10
+                        else:
+                            break
+                    sub_str = num * sub_str
+                    stack.append(sub_str) # 出来之后整个字符串重新进栈
+                    sub_str = ''
+
+        result_str = ''.join(stack)
+        return result_str
+
+
 ```
 
 ### 复杂度分析
 
-时间复杂度：遍历一次数组，时间复杂度为O(N)
+时间复杂度：遍历一次数组，时间复杂度为 O(N^2)。不确定。中间倒序取元素的时候是*N？
 
-空间复杂度：O(N)
+空间复杂度：O(N)。额外使用了栈的空间记录
 
